@@ -5,8 +5,10 @@
 package frc.robot;
 
 import frc.robot.commands.Drive;
+import frc.robot.commands.Elevate;
 import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Elevator;
 import frc.thunder.LightningContainer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer extends LightningContainer {
   private XboxController driver;
   private Drivetrain drivetrain;
+  private Elevator elevator;
 
   private double multiplier = 0.7;
 
@@ -27,6 +30,7 @@ public class RobotContainer extends LightningContainer {
   protected void initializeSubsystems() {
     driver = new XboxController(0);
     drivetrain = new Drivetrain();
+    elevator = new Elevator();
   }
 
   @Override
@@ -37,20 +41,22 @@ public class RobotContainer extends LightningContainer {
 
   @Override
   protected void configureButtonBindings() {
-    new Trigger(driver::getRightBumperButton).whileTrue(new TankDrive(drivetrain, (() -> driver.getLeftY() * multiplier), (() -> driver.getRightY() * multiplier)));
+    new Trigger(driver::getRightBumperButton).whileTrue(new Drive(drivetrain, (() -> driver.getLeftX() * multiplier), (() -> driver.getLeftY() * multiplier)));
+    
+    new Trigger(driver::getAButton).whileTrue(new Elevate(elevator, () -> 0.8));
+    new Trigger(driver::getBButton).whileTrue(new Elevate(elevator, () -> -0.8));
   }
 
   @Override
   protected void configureDefaultCommands() {
     // TODO Auto-generated method stub
     drivetrain.setDefaultCommand(
-      new Drive(drivetrain, (() -> driver.getLeftX() * multiplier), (() -> driver.getLeftY() * multiplier))
-    );
-  }
+      new TankDrive(drivetrain, (() -> driver.getLeftY() * multiplier), (() -> driver.getRightY() * multiplier)));
+    elevator.setDefaultCommand(new Elevate(elevator, () -> 0.15));
+ }
 
   @Override
   protected Command getAutonomousCommand() {
     return null;
   }
-  
 }

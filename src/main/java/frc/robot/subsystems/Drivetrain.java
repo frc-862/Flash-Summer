@@ -33,12 +33,12 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void setVerticalPower(double leftPower, double rightPower) {
-    leftVerticalMotor.set(TalonSRXControlMode.PercentOutput, leftPower);
+    leftVerticalMotor.set(TalonSRXControlMode.PercentOutput, -leftPower);
     rightVerticalMotor.set(VictorSPXControlMode.PercentOutput, rightPower);
   }
 
   public void setHorizontalPower(double frontPower, double backPower) {
-    frontHorizontalMotor.set(TalonSRXControlMode.PercentOutput, frontPower);
+    frontHorizontalMotor.set(TalonSRXControlMode.PercentOutput, -frontPower);
     backHorizontalMotor.set(TalonSRXControlMode.PercentOutput, backPower);
   }
 

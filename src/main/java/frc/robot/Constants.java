@@ -31,4 +31,8 @@ public final class Constants {
 
     public static int ELEVATOR_ID = 3;
   }
+
+  public static class ElevatorConstants {
+    public static double FULL_RANGE_TIME = 1.5; // seconds at 100% power
+  }
 }

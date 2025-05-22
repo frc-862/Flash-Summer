@@ -24,6 +24,6 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setPower(double power){
-    elevatorMotor.set(TalonSRXControlMode.PercentOutput, power);
+    elevatorMotor.set(TalonSRXControlMode.PercentOutput, -power);
   }
 }

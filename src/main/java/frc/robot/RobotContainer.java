@@ -5,12 +5,15 @@
 package frc.robot;
 
 import frc.robot.commands.Drive;
-import frc.robot.commands.Elevate;
+import frc.robot.commands.PositionElevate;
 import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Grabber;
 import frc.thunder.LightningContainer;
+
+import com.ctre.phoenix6.controls.PositionVoltage;
+
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -32,6 +35,7 @@ public class RobotContainer extends LightningContainer {
   private Grabber grabber;
   
   private double multiplier = 0.7;
+  private double targetElevatorPosition = 60;
 
   @Override
   protected void initializeSubsystems() {
@@ -54,8 +58,10 @@ public class RobotContainer extends LightningContainer {
   protected void configureButtonBindings() {
     new Trigger(driver::getRightBumperButton).whileTrue(new Drive(drivetrain, (() -> driver.getLeftX() * multiplier), (() -> driver.getLeftY() * multiplier)));
     
-    new Trigger(driver::getAButton).whileTrue(new Elevate(elevator, () -> 0.8));
-    new Trigger(driver::getBButton).whileTrue(new Elevate(elevator, () -> -0.8));
+    new Trigger(driver::getAButton).whileTrue(new InstantCommand(() -> setTargetPosition(0)));
+    new Trigger(driver::getBButton).whileTrue(new InstantCommand(() -> setTargetPosition(25)));
+    new Trigger(driver::getXButton).whileTrue(new InstantCommand(() -> setTargetPosition(50)));
+    new Trigger(driver::getYButton).whileTrue(new InstantCommand(() -> setTargetPosition(100)));
 
     new Trigger(driver::getRightBumperButton).onTrue(new InstantCommand(() -> grabber.openArms()));
     new Trigger(driver::getRightBumperButton).onFalse(new InstantCommand(() -> grabber.closeArms()));
@@ -66,11 +72,16 @@ public class RobotContainer extends LightningContainer {
     // TODO Auto-generated method stub
     drivetrain.setDefaultCommand(
       new TankDrive(drivetrain, (() -> driver.getLeftY() * multiplier), (() -> driver.getRightY() * multiplier)));
-    elevator.setDefaultCommand(new Elevate(elevator, () -> 0.1));
+    elevator.setDefaultCommand(new PositionElevate(elevator, () -> targetElevatorPosition));
  }
 
   @Override
   protected Command getAutonomousCommand() {
     return null;
+  }
+
+  private void setTargetPosition(double value) {
+    targetElevatorPosition = value;
+    System.out.println(targetElevatorPosition);
   }
 }
